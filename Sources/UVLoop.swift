@@ -15,16 +15,21 @@ public class UVLoop {
 	}
 
 	public init() {
-		_fLoop = uv_loop_t()
-		uv_loop_init(&_fLoop)
+		_fLoopPtr = UnsafeMutablePointer<uv_loop_t>.alloc(1)
+		uv_loop_init(_fLoopPtr)
+	}
+
+	deinit {
+		// TODO: stop, close, what?
+		_fLoopPtr.dealloc(1)
 	}
 
 	public var alive : Bool {
-		get { return uv_loop_alive(&_fLoop) != 0 }
+		get { return uv_loop_alive(_fLoopPtr) != 0 }
 	}
 
 	public var now : UInt64 {
-		get { return uv_now(&_fLoop) }
+		get { return uv_now(_fLoopPtr) }
 	}
 
 	public func configure() {
@@ -32,7 +37,7 @@ public class UVLoop {
 	}
 
 	public func run(mode mode: UVRunMode = UV_RUN_DEFAULT) {
-		uv_run(&_fLoop, mode)
+		uv_run(_fLoopPtr, mode)
 	}
 
 	// public func close() {
@@ -40,8 +45,12 @@ public class UVLoop {
 	// }
 
 	public func stop() {
-		uv_stop(&_fLoop)
+		uv_stop(_fLoopPtr)
 	}
 
-	var _fLoop: uv_loop_t
+	public func uvLoop() -> UnsafeMutablePointer<uv_loop_t> {
+		return _fLoopPtr
+	}
+
+	var _fLoopPtr: UnsafeMutablePointer<uv_loop_t>
 }
