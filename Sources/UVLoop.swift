@@ -32,9 +32,9 @@ public class UVLoop {
 		get { return uv_now(_fLoopPtr) }
 	}
 
-	public func configure() {
-
-	}
+	// public func configure() {
+	// 
+	// }
 
 	public func run(mode mode: UVRunMode = UV_RUN_DEFAULT) {
 		uv_run(_fLoopPtr, mode)
@@ -51,6 +51,16 @@ public class UVLoop {
 	public func uvLoop() -> UnsafeMutablePointer<uv_loop_t> {
 		return _fLoopPtr
 	}
+
+	//
+	// FS operations
+
+	public func open(path: String, flags: Int32 = 0, mode: Int32 = 0, callback: UVFSCallback? = nil) {
+		openFile(self, path, flags: flags, mode: 0, callback: callback)
+	}
+
+	//
+	//
 
 	var _fLoopPtr: UnsafeMutablePointer<uv_loop_t>
 }
