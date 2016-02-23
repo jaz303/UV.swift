@@ -3,17 +3,198 @@ import CUV
 typealias UVFSPtr = UnsafeMutablePointer<uv_fs_t>
 public typealias UVFSCallback = () -> ()
 
-public func openFile(loop: UVLoop, _ path: String, flags: Int32 = 0, mode: Int32 = 0, callback: UVFSCallback? = nil) {
-	let req = UVFSPtr.alloc(1)
-	stashCallback(req, callback)
-	uv_fs_open(loop.uvLoop(), req, path, flags, mode) { (req: UVFSPtr) in
-		let callback = unstashCallback(req)
-		req.dealloc(1)
-		callback?()
+public func closeFile(loop: UVLoop, _ file: UVFile, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_close(loop._fLoopPtr, req, file) { (req: UVFSPtr) in
+		endRequest(req)
 	}
 }
 
-func stashCallback(req: UVFSPtr, _ callback: UVFSCallback?) {
+public func openFile(loop: UVLoop, _ path: String, flags: UVInt = 0, mode: UVInt = 0, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_open(loop.uvLoop(), req, path, flags, mode) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+// fsRead
+
+public func fsUnlink(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_unlink(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+// fsWrite
+
+public func fsMkdir(loop: UVLoop, _ path: String, mode: UVInt = 0, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_mkdir(loop._fLoopPtr, req, path, mode) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func fsMkdtemp(loop: UVLoop, _ tpl: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_mkdtemp(loop._fLoopPtr, req, tpl) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func fsRmdir(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_rmdir(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func fsScandir(loop: UVLoop, _ path: String, flags: UVInt = 0, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_scandir(loop._fLoopPtr, req, path, flags) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+// scandir_next
+
+public func stat(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_stat(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func stat(loop: UVLoop, _ file: UVFile, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_fstat(loop._fLoopPtr, req, file) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func lstat(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_lstat(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func rename(loop: UVLoop, path: String, newPath: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_rename(loop._fLoopPtr, req, path, newPath) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func sync(loop: UVLoop, file: UVFile, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_fsync(loop._fLoopPtr, req, file) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func datasync(loop: UVLoop, file: UVFile, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_fdatasync(loop._fLoopPtr, req, file) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func truncate(loop: UVLoop, file: UVFile, offset: Int64, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_ftruncate(loop._fLoopPtr, req, file, offset) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func sendfile(loop: UVLoop, outFile: UVFile, inFile: UVFile, offset: Int64, length: UVSize, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_sendfile(loop._fLoopPtr, req, outFile, inFile, offset, length) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func access(loop: UVLoop, path: String, mode: UVInt, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_access(loop._fLoopPtr, req, path, mode) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func chmod(loop: UVLoop, path: String, mode: UVInt, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_chmod(loop._fLoopPtr, req, path, mode) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func chmod(loop: UVLoop, file: UVFile, mode: UVInt, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_fchmod(loop._fLoopPtr, req, file, mode) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func utime(loop: UVLoop, path: String, atime: Double, mtime: Double, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_utime(loop._fLoopPtr, req, path, atime, mtime) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func utime(loop: UVLoop, file: UVFile, atime: Double, mtime: Double, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_futime(loop._fLoopPtr, req, file, atime, mtime) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func link(loop: UVLoop, path: String, newPath: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_link(loop._fLoopPtr, req, path, newPath) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func symlink(loop: UVLoop, path: String, newPath: String, flags: UVInt = 0, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_symlink(loop._fLoopPtr, req, path, newPath, flags) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func readlink(loop: UVLoop, path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_readlink(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+/*public func realpath(loop: UVLoop, path: String, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_realpath(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}*/
+
+public func chown(loop: UVLoop, path: String, uid: UVUID, gid: UVUID, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_chown(loop._fLoopPtr, req, path, uid, gid) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+public func chown(loop: UVLoop, file: UVFile, uid: UVUID, gid: UVUID, callback: UVFSCallback? = nil) {
+	let req = beginRequest(callback)
+	uv_fs_fchown(loop._fLoopPtr, req, file, uid, gid) { (req: UVFSPtr) in
+		endRequest(req)
+	}
+}
+
+
+
+func beginRequest(callback: UVFSCallback?) -> UVFSPtr {
+	let req = UVFSPtr.alloc(1)
 	if callback == nil {
 		req.memory.data = nil
 	} else {
@@ -23,15 +204,24 @@ func stashCallback(req: UVFSPtr, _ callback: UVFSCallback?) {
 			).toOpaque()
 		)
 	}
+	return req
 }
 
-func unstashCallback(req: UVFSPtr) -> UVFSCallback? {
-	if req.memory.data == nil {
-		return nil
-	} else {
-		let box: Box<UVFSCallback> = Unmanaged.fromOpaque(COpaquePointer(req.memory.data)).takeRetainedValue()
-		return box.value
+func endRequest(req: UVFSPtr) {
+	var callback: UVFSCallback? = nil
+
+	if req.memory.data != nil {
+		let box: Box<UVFSCallback> =
+			Unmanaged
+				.fromOpaque(COpaquePointer(req.memory.data))
+				.takeRetainedValue()
+		callback = box.value
 	}
+
+	uv_fs_req_cleanup(req)
+	req.dealloc(1)
+
+	callback?()
 }
 
 class Box<T> {
