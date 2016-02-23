@@ -3,14 +3,14 @@ import CUV
 typealias UVFSPtr = UnsafeMutablePointer<uv_fs_t>
 public typealias UVFSCallback = () -> ()
 
-public func closeFile(loop: UVLoop, _ file: UVFile, callback: UVFSCallback? = nil) {
+public func close(loop: UVLoop, _ file: UVFile, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_close(loop._fLoopPtr, req, file) { (req: UVFSPtr) in
 		endRequest(req)
 	}
 }
 
-public func openFile(loop: UVLoop, _ path: String, flags: UVInt = 0, mode: UVInt = 0, callback: UVFSCallback? = nil) {
+public func open(loop: UVLoop, _ path: String, flags: UVInt = 0, mode: UVInt = 0, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_open(loop.uvLoop(), req, path, flags, mode) { (req: UVFSPtr) in
 		endRequest(req)
@@ -19,7 +19,7 @@ public func openFile(loop: UVLoop, _ path: String, flags: UVInt = 0, mode: UVInt
 
 // fsRead
 
-public func fsUnlink(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+public func unlink(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_unlink(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
 		endRequest(req)
@@ -28,28 +28,28 @@ public func fsUnlink(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil
 
 // fsWrite
 
-public func fsMkdir(loop: UVLoop, _ path: String, mode: UVInt = 0, callback: UVFSCallback? = nil) {
+public func mkdir(loop: UVLoop, _ path: String, mode: UVInt = 0, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_mkdir(loop._fLoopPtr, req, path, mode) { (req: UVFSPtr) in
 		endRequest(req)
 	}
 }
 
-public func fsMkdtemp(loop: UVLoop, _ tpl: String, callback: UVFSCallback? = nil) {
+public func mkdtemp(loop: UVLoop, _ tpl: String, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_mkdtemp(loop._fLoopPtr, req, tpl) { (req: UVFSPtr) in
 		endRequest(req)
 	}
 }
 
-public func fsRmdir(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
+public func rmdir(loop: UVLoop, _ path: String, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_rmdir(loop._fLoopPtr, req, path) { (req: UVFSPtr) in
 		endRequest(req)
 	}
 }
 
-public func fsScandir(loop: UVLoop, _ path: String, flags: UVInt = 0, callback: UVFSCallback? = nil) {
+public func scandir(loop: UVLoop, _ path: String, flags: UVInt = 0, callback: UVFSCallback? = nil) {
 	let req = beginRequest(callback)
 	uv_fs_scandir(loop._fLoopPtr, req, path, flags) { (req: UVFSPtr) in
 		endRequest(req)
@@ -191,9 +191,8 @@ public func chown(loop: UVLoop, file: UVFile, uid: UVUID, gid: UVUID, callback: 
 	}
 }
 
-
-
 func beginRequest(callback: UVFSCallback?) -> UVFSPtr {
+	// TODO: pool request objects
 	let req = UVFSPtr.alloc(1)
 	if callback == nil {
 		req.memory.data = nil
@@ -209,7 +208,6 @@ func beginRequest(callback: UVFSCallback?) -> UVFSPtr {
 
 func endRequest(req: UVFSPtr) {
 	var callback: UVFSCallback? = nil
-
 	if req.memory.data != nil {
 		let box: Box<UVFSCallback> =
 			Unmanaged
@@ -217,10 +215,8 @@ func endRequest(req: UVFSPtr) {
 				.takeRetainedValue()
 		callback = box.value
 	}
-
 	uv_fs_req_cleanup(req)
 	req.dealloc(1)
-
 	callback?()
 }
 
