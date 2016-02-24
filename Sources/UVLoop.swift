@@ -53,13 +53,6 @@ public class UVLoop {
 	}
 
 	//
-	// FS operations
-
-	public func open(path: String, flags: Int32 = 0, mode: Int32 = 0, callback: UVFSCallback? = nil) {
-		openFile(self, path, flags: flags, mode: 0, callback: callback)
-	}
-
-	//
 	//
 
 	var _fLoopPtr: UnsafeMutablePointer<uv_loop_t>
