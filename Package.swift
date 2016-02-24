@@ -5,7 +5,7 @@ let package = Package(
 	targets: [],
 	dependencies: [
 		.Package(
-			url: "https://github.com/jaz303/CUV.git",
+			url: "https://github.com/jaz303/CUV.swift.git",
 			majorVersion: 0
 		)
 	]
