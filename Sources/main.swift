@@ -1,10 +1,7 @@
-print("here we go!")
-
 let loop = UVLoop.defaultLoop()
 
 uv.open(loop, "test.txt") { (err, file) in
-	let buffers = [ByteBuffer(16), ByteBuffer(16)]
-
+	let buffers = [ByteBuffer(18), ByteBuffer(16)]
 	if err != nil {
 		print("error opening file!")
 		return
