@@ -41,7 +41,6 @@ extension uv {
 		}
 	}
 
-	// TODO: also, probably need to make sure they're retained somehow.
 	public static func read(loop: UVLoop, _ file: UVFile, _ buffers: [UVBufferConvertible], offset: Int64 = -1, callback: UVFSIntCallback? = nil) {
 		let req = beginReq(callback)
 		let uvBuffers = (buffers.map({$0.asUVBuffer()}))
@@ -57,7 +56,28 @@ extension uv {
 		}
 	}
 
-	// fsWrite
+	public static func write(loop: UVLoop, _ file: UVFile, _ buffer: UVBufferConvertible, offset: Int64 = -1, callback: UVFSIntCallback? = nil) {
+		let req = beginReq(callback)
+		var uvBuffer = buffer.asUVBuffer()
+		uv_fs_write(loop.uvLoop(), req, file.fd, &uvBuffer, 1, offset) { (req: UVFSPtr) in
+			endIntReq(req)
+		}	
+	}
+
+	public static func write(loop: UVLoop, _ file: UVFile, _ buffers: [UVBuffer], offset: Int64 = -1, callback: UVFSIntCallback? = nil) {
+		let req = beginReq(callback)
+		uv_fs_write(loop.uvLoop(), req, file.fd, buffers, UInt32(buffers.count), offset) { (req: UVFSPtr) in
+			endIntReq(req)
+		}
+	}
+
+	public static func write(loop: UVLoop, _ file: UVFile, _ buffers: [UVBufferConvertible], offset: Int64 = -1, callback: UVFSIntCallback? = nil) {
+		let req = beginReq(callback)
+		let uvBuffers = (buffers.map({$0.asUVBuffer()}))
+		uv_fs_write(loop.uvLoop(), req, file.fd, uvBuffers, UInt32(buffers.count), offset) { (req: UVFSPtr) in
+			endIntReq(req)
+		}
+	}
 
 	public static func mkdir(loop: UVLoop, _ path: String, mode: UVInt = 0, callback: UVFSCallback? = nil) {
 		let req = beginReq(callback)
