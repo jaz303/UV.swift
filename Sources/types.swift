@@ -1,3 +1,4 @@
+import ByteBuffer
 import CUV
 import Foundation
 
@@ -36,6 +37,9 @@ public typealias UVFSStringCallback = (UVError?, String?) -> ()
 extension ByteBuffer : UVBufferConvertible {
 	// ...nor this
 	@objc public func asUVBuffer() -> UVBuffer {
-		return UVBuffer(base: &self.data, len: self.length)
+		return UVBuffer(
+			base: self.dataPointerInt8(),
+			len: self.length
+		)
 	}
 }
