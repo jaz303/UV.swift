@@ -1,4 +1,4 @@
-let loop = UVLoop.defaultLoop()
+let loop = uv.defaultLoop
 
 uv.open(loop, "test.txt") { (err, file) in
 	let buffers = [ByteBuffer(18), ByteBuffer(16)]

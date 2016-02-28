@@ -6,14 +6,6 @@ public typealias UVRunMode = uv_run_mode
 // TODO: uv_loop_close()
 // TODO: uv_walk()
 public class UVLoop {
-	static var _defaultLoop: UVLoop?
-	public static func defaultLoop() -> UVLoop {
-		if _defaultLoop == nil {
-			_defaultLoop = UVLoop()
-		}
-		return _defaultLoop!
-	}
-
 	public init() {
 		_fLoopPtr = UnsafeMutablePointer<uv_loop_t>.alloc(1)
 		uv_loop_init(_fLoopPtr)
