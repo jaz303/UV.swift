@@ -1,5 +1,9 @@
 let loop = uv.defaultLoop
 
+loop.idle() { (_) in
+	print("idle start!")
+}
+
 uv.open(loop, "test.txt") { (err, file) in
 	let buffers = [ByteBuffer(18), ByteBuffer(16)]
 	if err != nil {

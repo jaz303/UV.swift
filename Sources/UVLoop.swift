@@ -44,6 +44,16 @@ public class UVLoop {
 		return _fLoopPtr
 	}
 
+	public func idle() -> UVIdle {
+		return UVIdle(loop: self)
+	}
+
+	public func idle(callback: UVIdleCallback) -> UVIdle {
+		let idle = UVIdle(loop: self)
+		idle.start(callback)
+		return idle
+	}
+
 	//
 	//
 

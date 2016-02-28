@@ -21,6 +21,8 @@ public enum UVError : ErrorType {
 	case AddressNotAvailable
 }
 
+public typealias UVIdleCallback = (UVIdle) -> ()
+
 public typealias UVFSCallback = (UVError?) -> ()
 public typealias UVFSFileCallback = (UVError?, UVFile?) -> ()
 public typealias UVFSIntCallback = (UVError?, Int?) -> ()
