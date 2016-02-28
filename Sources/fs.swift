@@ -1,7 +1,5 @@
 import CUV
 
-// TODO: read
-// TODO: write
 // TODO: stat
 // TODO: lstat
 // TODO: utime
